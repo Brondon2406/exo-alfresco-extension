@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app>
+	<display-name>alfresco-extension-webapp</display-name>
+	<listener>
+		<listener-class>org.exoplatform.container.web.PortalContainerConfigOwner</listener-class>
+	</listener>
+	<filter>
+		<filter-name>ResourceRequestFilter</filter-name>
+		<filter-class>org.exoplatform.portal.application.ResourceRequestFilter</filter-class>
+	</filter>
+
+	<filter-mapping>
+		<filter-name>ResourceRequestFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	<servlet>
+		<servlet-name>RestServlet</servlet-name>
+		<servlet-class>org.exoplatform.services.rest.servlet.RestServlet</servlet-class>
+		<multipart-config>
+			<max-file-size>10485760</max-file-size> <!-- 10MB -->
+			<max-request-size>20971520</max-request-size> <!-- 20MB -->
+		</multipart-config>
+	</servlet>
+</web-app>
