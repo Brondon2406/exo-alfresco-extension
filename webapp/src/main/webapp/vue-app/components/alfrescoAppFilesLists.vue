@@ -1,7 +1,10 @@
 <template>
   <div id="vue_webpack_alfresco-list">
     <h2 class="vue_webpack_alfresco-app-title">Liste des fichiers Alfresco</h2>
-    <div class="upload-zone" @dragover.prevent @drop.prevent="handleDrop">
+    <div
+      class="upload-zone"
+      @dragover.prevent
+      @drop.prevent="handleDrop">
       <p>Déposez votre fichier ici ou cliquez pour sélectionner</p>
       <p v-if="fileToUpload"><strong>Fichier sélectionné :</strong> {{ fileToUpload.name }}</p>
       <input
@@ -9,8 +12,7 @@
         ref="fileInput"
         @change="handleFileChange"
         accept="*/*"
-        style="display: none"
-      />
+        style="display: none">
       <button @click="triggerFileInput">Choisir un fichier</button>
       <button @click="uploadFile" :disabled="!fileToUpload || isUploading">
         {{ isUploading ? 'Envoi en cours...' : 'Déposer' }}
@@ -139,6 +141,9 @@ export default {
       const formData = new FormData();
       formData.append('file', this.fileToUpload);
 
+      console.log(this.fileToUpload);
+      console.log(formData.get('file'));
+
       this.isUploading = true;
       fetch(`${eXo.env.portal.context}/rest/alfresco/documents/upload/${this.parentNodeId}`, {
         method: 'POST',
@@ -164,7 +169,7 @@ export default {
         })
         .catch(async (err) => {
           const msg = await err.text();
-          this.errorMessage = msg || "Échec de l'upload du fichier";
+          this.errorMessage = msg || 'Échec de l\'upload du fichier';
           this.resetMessageAfterDelay();
         })
         .finally(() => {
