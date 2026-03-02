@@ -5,7 +5,7 @@
   <parent>
     <artifactId>addons-exo-parent-pom</artifactId>
     <groupId>org.exoplatform.addons</groupId>
-    <version>17-M02</version>
+    <version>19-RC01</version>
   </parent>
   <groupId>org.exoplatform.alfresco</groupId>
   <artifactId>alfresco-extension</artifactId>
@@ -16,7 +16,7 @@
     <module>webapp</module>
   </modules>
   <properties>
-    <org.exoplatform.commons-exo.version>7.0.0</org.exoplatform.commons-exo.version>
+    <org.exoplatform.commons-exo.version>7.1.x-SNAPSHOT</org.exoplatform.commons-exo.version>
   </properties>
   <dependencyManagement>
     <dependencies>
@@ -29,4 +29,29 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
+  <repositories>
+    <repository>
+      <id>repository.exoplatform.org</id>
+      <url>https://repository.exoplatform.org/public</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
+
+  <pluginRepositories>
+    <pluginRepository>
+      <id>repository.exoplatform.org</id>
+      <url>https://repository.exoplatform.org/public</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </pluginRepository>
+  </pluginRepositories>
 </project>
