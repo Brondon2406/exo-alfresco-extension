@@ -17,6 +17,9 @@
   </modules>
   <properties>
     <org.exoplatform.commons-exo.version>7.1.x-SNAPSHOT</org.exoplatform.commons-exo.version>
+    <java.version>21</java.version>
+    <maven.compiler.source>21</maven.compiler.source>
+    <maven.compiler.target>21</maven.compiler.target>
   </properties>
   <dependencyManagement>
     <dependencies>

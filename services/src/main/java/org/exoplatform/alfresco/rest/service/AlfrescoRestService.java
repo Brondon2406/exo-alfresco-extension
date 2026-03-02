@@ -1,5 +1,7 @@
 package org.exoplatform.alfresco.rest.service;
 
+
+import jakarta.inject.Inject;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -16,7 +18,9 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 @Path("/alfresco/documents")
 @MultipartConfig(
@@ -27,6 +31,7 @@ import java.util.*;
 public class AlfrescoRestService implements ResourceContainer {
 
     private static final Log LOG = ExoLogger.getLogger(AlfrescoRestService.class);
+
     private final AlfrescoServiceImpl service;
 
     private static final String TICKET = "ticket";
@@ -36,6 +41,7 @@ public class AlfrescoRestService implements ResourceContainer {
     private static final String TICKET_NOT_FOUND = "No ticket found";
     private static final String UPLOAD_ERROR = "Upload Error";
 
+    @Inject
     public AlfrescoRestService(AlfrescoServiceImpl service){
         this.service = service;
     }

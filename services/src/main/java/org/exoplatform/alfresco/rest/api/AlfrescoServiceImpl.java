@@ -19,27 +19,49 @@ import org.exoplatform.alfresco.rest.util.Constants;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.json.JSONObject;
+import org.jspecify.annotations.NonNull;
 
 import javax.ws.rs.core.Response;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-public class AlfrescoServiceImpl implements AlfrescoService{
+/**
+ * Implémentation du service d'interaction avec l'API REST Alfresco.
+ */
+public final class AlfrescoServiceImpl implements AlfrescoService {
+
+    @SuppressWarnings("JavadocVariable")
     private static final Log LOG = ExoLogger.getLogger(AlfrescoServiceImpl.class);
     private final ObjectMapper mapper = new ObjectMapper();
 
-    private static final String ALFRESCO_USERNAME = "alfrescoUsername";
-    private static final String TICKET = "ticket";
-    private static final String FAILED_RESPONSE_CODE = "alfrescoFailedCode";
+    // ──────────────────────────────────────────────── Constantes HTTP
+    private static final int HTTP_CREATED           = 201;
+    private static final int HTTP_OK                = 200;
+    private static final int HTTP_NO_CONTENT        = 204;
+    private static final int HTTP_BAD_REQUEST       = 400;
+    private static final int HTTP_INTERNAL_ERROR    = 500;
+
+    // ──────────────────────────────────────────────── Constantes buffer & autres
+    private static final int DEFAULT_BUFFER_SIZE    = 4096;
+
+    // ──────────────────────────────────────────────── Constantes métier (déjà existantes)
+    private static final String ALFRESCO_USERNAME   = "alfrescoUsername";
+    private static final String TICKET              = "ticket";
+    private static final String FAILED_RESPONSE_CODE   = "alfrescoFailedCode";
     private static final String FAILED_RESPONSE_MESSAGE = "alfrescoFailedMessage";
-    private static final String FAILED_TITLE = "title";
-    private static final String BASIC_AUTH_PREFIX = "Basic ";
-    private static final String ENTRY = "entry";
-    private static final String ROLE_TICKET = "ROLE_TICKET:";
-    private static final String NODE_ID = "{nodeId}";
-    private static final String AUTHORIZATION = "Authorization";
-    private static final String UPLOAD_ERROR = "Upload Error";
+    private static final String FAILED_TITLE        = "title";
+    private static final String BASIC_AUTH_PREFIX   = "Basic ";
+    private static final String ENTRY               = "entry";
+    private static final String ROLE_TICKET         = "ROLE_TICKET:";
+    private static final String NODE_ID             = "{nodeId}";
+    private static final String AUTHORIZATION       = "Authorization";
+    private static final String UPLOAD_ERROR        = "Upload Error";
 
     @Override
     public ServiceResponse login(String alfrescoUsername, String alfrescoPass) {
@@ -55,7 +77,7 @@ public class AlfrescoServiceImpl implements AlfrescoService{
 
             try (CloseableHttpResponse response = client.execute(post)) {
                 int status = response.getStatusLine().getStatusCode();
-                if (status == 201) {
+                if (status == HTTP_OK || status == HTTP_CREATED) {
                     JsonNode node = mapper.readTree(response.getEntity().getContent());
                     String ticketResponse = node.path(ENTRY).path("id").asText();
                     JSONObject jsonObject = new JSONObject();
@@ -79,7 +101,7 @@ public class AlfrescoServiceImpl implements AlfrescoService{
             LOG.error(Constants.LOGIN_FAILED_EXCEPTION, e);
             return ServiceResponse.builder()
                     .response(null)
-                    .status(400)
+                    .status(HTTP_BAD_REQUEST)
                     .message(String.format(Constants.LOGIN_FAILED_EXCEPTION, e.getMessage()))
                     .build();
         }
@@ -94,7 +116,7 @@ public class AlfrescoServiceImpl implements AlfrescoService{
 
             try (CloseableHttpResponse response = client.execute(get)) {
                 int status = response.getStatusLine().getStatusCode();
-                if (status == 200) {
+                if (status == HTTP_OK) {
                     JsonNode root = mapper.readTree(response.getEntity().getContent());
                     List<Map<String, Object>> files = generateResponseJsonNode(root);
                     LOG.info("Fetched {} files from Alfresco.", files.size());
@@ -118,7 +140,7 @@ public class AlfrescoServiceImpl implements AlfrescoService{
         }
         return ServiceResponse.builder()
                 .message("Internal error")
-                .status(400)
+                .status(HTTP_BAD_REQUEST)
                 .response(null)
                 .build();
     }
@@ -137,8 +159,8 @@ public class AlfrescoServiceImpl implements AlfrescoService{
                 LOG.warn("No 'file' part found in the request");
                 return ServiceResponse.builder()
                         .response(null)
-                        .status(400)
-                        .message(createErrorResponse(UPLOAD_ERROR, "Missing 'file' part", 400))
+                        .status(HTTP_BAD_REQUEST)
+                        .message(createErrorResponse(UPLOAD_ERROR, "Missing 'file' part", HTTP_BAD_REQUEST))
                         .build();
             }
 
@@ -147,8 +169,8 @@ public class AlfrescoServiceImpl implements AlfrescoService{
                 LOG.warn("Upload attempt with empty file input stream.");
                 return ServiceResponse.builder()
                         .response(null)
-                        .status(400)
-                        .message(createErrorResponse(UPLOAD_ERROR, "File input stream is empty.", 400))
+                        .status(HTTP_BAD_REQUEST)
+                        .message(createErrorResponse(UPLOAD_ERROR, "File input stream is empty.", HTTP_BAD_REQUEST))
                         .build();
             }
 
@@ -164,7 +186,7 @@ public class AlfrescoServiceImpl implements AlfrescoService{
 
             try (CloseableHttpResponse response = client.execute(post)) {
                 int status = response.getStatusLine().getStatusCode();
-                if (status >= 200 && status < 300) {
+                if (status >= HTTP_OK && status < 300) {
                     JsonNode root = mapper.readTree(response.getEntity().getContent());
                     Map<String, Object> newFileEntry = mapToFileEntry(root.path(ENTRY));
                     LOG.info("Uploaded file '{}' to Alfresco successfully. Node ID: {}", fileName, root.path(ENTRY).path("id").asText());
@@ -177,7 +199,7 @@ public class AlfrescoServiceImpl implements AlfrescoService{
                     LOG.error("Failed to upload file to Alfresco. Status: {}", status);
                     return ServiceResponse.builder()
                             .response(null)
-                            .message(getFailedResponse(response, "Upload failed"))
+                            .message(getFailedResponse(response))
                             .status(status)
                             .build();
                 }
@@ -187,7 +209,7 @@ public class AlfrescoServiceImpl implements AlfrescoService{
         }
         return ServiceResponse.builder()
                 .message("Internal error during upload")
-                .status(400)
+                .status(HTTP_BAD_REQUEST)
                 .response(null)
                 .build();
     }
@@ -204,27 +226,18 @@ public class AlfrescoServiceImpl implements AlfrescoService{
                 int status = response.getStatusLine().getStatusCode();
                 String reasonPhrase = response.getStatusLine().getReasonPhrase();
 
-                if (status == 200) {
+                if (status == HTTP_OK) {
                     if (response.getEntity() == null) {
                         LOG.error("Alfresco download response entity is null for file: {}", fileID);
                         return ServiceResponse.builder()
                                 .response(response)
                                 .message(createErrorResponse("Download Error", "Alfresco did not return file content.",
-                                        204))
+                                        HTTP_NO_CONTENT))
                                 .status(Response.Status.NO_CONTENT.getStatusCode())
                                 .build();
                     }
 
-                    ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-                    try (InputStream contentStream = response.getEntity().getContent()) {
-                        byte[] data = new byte[4096];
-                        int nRead;
-                        while ((nRead = contentStream.read(data, 0, data.length)) != -1) {
-                            buffer.write(data, 0, nRead);
-                        }
-                        buffer.flush();
-                    }
-                    byte[] fileBytes = buffer.toByteArray();
+                    byte[] fileBytes = getBytes(response);
 
                     LOG.info("Successfully downloaded file '{}' ({} bytes) from Alfresco.", fileID, fileBytes.length);
                     return ServiceResponse.builder()
@@ -238,7 +251,7 @@ public class AlfrescoServiceImpl implements AlfrescoService{
                             fileID, status, responseBody);
                     return ServiceResponse.builder()
                             .response(null)
-                            .message(createFailedResponse(status, reasonPhrase, "Download failed from Alfresco"))
+                            .message(createFailedResponse(status, reasonPhrase))
                             .status(status)
                             .build();
                 }
@@ -247,11 +260,24 @@ public class AlfrescoServiceImpl implements AlfrescoService{
             LOG.error("Download file exception: An unexpected error occurred during file download for '{}'.", fileID,
                     e);
             return ServiceResponse.builder()
-                    .status(500)
-                    .message(createErrorResponse("Internal Server Error", "Internal error during file download.", 500))
+                    .status(HTTP_INTERNAL_ERROR)
+                    .message(createErrorResponse("Internal Server Error", "Internal error during file download.", HTTP_INTERNAL_ERROR))
                     .response(null)
                     .build();
         }
+    }
+
+    private static byte @NonNull [] getBytes(CloseableHttpResponse response) throws IOException {
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        try (InputStream contentStream = response.getEntity().getContent()) {
+            byte[] data = new byte[DEFAULT_BUFFER_SIZE];
+            int nRead;
+            while ((nRead = contentStream.read(data, 0, data.length)) != -1) {
+                buffer.write(data, 0, nRead);
+            }
+            buffer.flush();
+        }
+        return buffer.toByteArray();
     }
 
     private String buildAuthHeader(String ticket) {
@@ -289,10 +315,10 @@ public class AlfrescoServiceImpl implements AlfrescoService{
         return jsonObject.toString();
     }
 
-    private String getFailedResponse(HttpResponse response, String title) {
+    private String getFailedResponse(HttpResponse response) {
         try {
             JSONObject jsonObject = new JSONObject();
-            jsonObject.put(FAILED_TITLE, title);
+            jsonObject.put(FAILED_TITLE, "Upload failed");
             jsonObject.put(FAILED_RESPONSE_CODE, response.getStatusLine().getStatusCode());
             jsonObject.put(FAILED_RESPONSE_MESSAGE, response.getStatusLine().getReasonPhrase());
             return jsonObject.toString();
@@ -302,9 +328,9 @@ public class AlfrescoServiceImpl implements AlfrescoService{
         }
     }
 
-    private String createFailedResponse(int alfrescoStatusCode, String alfrescoReasonPhrase, String title) {
+    private String createFailedResponse(int alfrescoStatusCode, String alfrescoReasonPhrase) {
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put(FAILED_TITLE, title);
+        jsonObject.put(FAILED_TITLE, "Download failed from Alfresco");
         jsonObject.put(FAILED_RESPONSE_CODE, alfrescoStatusCode);
         jsonObject.put(FAILED_RESPONSE_MESSAGE, alfrescoReasonPhrase);
         return jsonObject.toString();
