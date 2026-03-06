@@ -34,7 +34,7 @@
   </dependencyManagement>
   <repositories>
     <repository>
-      <id>repository.exoplatform.org</id>
+      <id>eXo-pub-repo</id>
       <url>https://repository.exoplatform.org/public</url>
       <releases>
         <enabled>true</enabled>
@@ -47,7 +47,7 @@
 
   <pluginRepositories>
     <pluginRepository>
-      <id>repository.exoplatform.org</id>
+      <id>eXo-pub-repo</id>
       <url>https://repository.exoplatform.org/public</url>
       <releases>
         <enabled>true</enabled>

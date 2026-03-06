@@ -3,8 +3,7 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.gatein.org/xml/ns/gatein_objects_1_6 http://www.gatein.org/xml/ns/gatein_objects_1_6"
         xmlns="http://www.gatein.org/xml/ns/gatein_objects_1_6">
-
-  <page>
+    <page>
     <name>alfrescoPage</name>
     <title>Alfresco App</title>
 
@@ -22,7 +21,7 @@
 
         <title>Alfresco Portlet</title>
         <access-permissions>*:/platform/users</access-permissions>
-        <show-info-bar>false</show-info-bar>
+        <show-info-bar>true</show-info-bar>
       </portlet-application>
 
     </container>

@@ -5,7 +5,7 @@
   <portlet-skin>
     <application-name>alfresco-extension-webapp</application-name>
     <portlet-name>alfrescoPortlet</portlet-name>
-    <skin-name>Community</skin-name>
+    <skin-name>Enterprise</skin-name>
     <css-path>/css/alfrescoApp.css</css-path>
   </portlet-skin>
 
@@ -13,8 +13,8 @@
     <name>alfrescoPortlet</name>
     <module>
       <script>
-        <minify>false</minify>
-        <path>/js/alfrescoApp.bundle.js</path>
+          <minify>false</minify>
+          <path>/js/alfrescoApp.bundle.js</path>
       </script>
       <depends>
         <module>vue</module>
