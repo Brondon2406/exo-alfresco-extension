@@ -1,30 +1,65 @@
 package org.exoplatform.alfresco.rest.util;
 
+import org.exoplatform.alfresco.rest.api.AlfrescoSettingImpl;
+import org.exoplatform.alfresco.rest.model.AlfrescoSettingsEntity;
+import org.exoplatform.services.log.ExoLogger;
+import org.exoplatform.services.log.Log;
 
 /**
  * Application-wide string constants for Alfresco REST API URLs and messages.
  */
 public final class Constants {
 
-    /** Base URL of the Alfresco server. */
-    public static final String ALFRESCO_URL =
-            "http://http://192.168.1.199/:8080";
+    /** Logger for this class. */
+    private static final Log LOG = ExoLogger.getLogger(Constants.class);
+
+    /**
+     * Alfresco settings
+     */
+    private final AlfrescoSettingImpl alfrescoSetting;
+
+    /**
+     * Constructor for IoC injection.
+     *
+     * @param alfrescoSetting the Alfresco setting service
+     */
+    public Constants(final AlfrescoSettingImpl alfrescoSetting) {
+        this.alfrescoSetting = alfrescoSetting;
+    }
+
+    private String getAlfrescoUrl() {
+        AlfrescoSettingsEntity setting = this.alfrescoSetting.getAlfrescoSettings();
+        if (setting == null) {
+            LOG.error("Alfresco setting is null");
+            return null;
+        }
+        String url = setting.getServerApiUrl();
+        if (url == null || url.isEmpty()) {
+            return null;
+        }
+        return url.endsWith("/") ? url.substring(0, url.length() - 1) : url;
+    }
 
     /** Alfresco authentication endpoint (ticket creation). */
-    public static final String ALFRESCO_API_LOGIN_URL =
-            ALFRESCO_URL + "/alfresco/api/-default-/public/authentication/versions/1/tickets";
+    public final String getAlfrescoApiUrl() {
+        return getAlfrescoUrl() + "/alfresco/api/-default-/public/authentication/versions/1/tickets";
+    }
 
     /** Alfresco endpoint to list a node's children. */
-    public static final String ALFRESCO_API_FILES_URL =
-            ALFRESCO_URL + "/alfresco/api/-default-/public/alfresco/versions/1/nodes/{nodeId}/children";
+    public final String getAlfrescoApiFilesUrl(){
+        return getAlfrescoUrl() + "/alfresco/api/-default-/public/alfresco/versions/1/nodes/{nodeId}/children";
+    }
 
     /** Alfresco endpoint to upload a file under a node. */
-    public static final String ALFRESCO_API_UPLOAD_URL =
-            ALFRESCO_URL + "/alfresco/api/-default-/public/alfresco/versions/1/nodes/{nodeId}/children";
+    public final String getAlfrescoApiUploadUrl(){
+        return getAlfrescoUrl() + "/alfresco/api/-default-/public/alfresco/versions/1/nodes/{nodeId}/children";
+    }
 
     /** Alfresco endpoint to download a node's binary content. */
-    public static final String ALFRESCO_API_DOWNLOAD_URL =
-            ALFRESCO_URL + "/alfresco/api/-default-/public/alfresco/versions/1/nodes/{nodeId}/content";
+    public final String  getAlferscoApiDownloadUrl(){
+        return getAlfrescoUrl() + "/alfresco/api/-default-/public/alfresco/versions/1/nodes/{nodeId}/content";
+    }
+
 
     // ──────────────────────────────────────────────── Error messages
 
@@ -65,10 +100,4 @@ public final class Constants {
 
     /** Success message for listing a user's files. */
     public static final String FILES_FETCHED_SUCCESSFULLY = "Getting user files successfully";
-
-    /**
-     * Private constructor to prevent instantiation of this utility class.
-     */
-    private Constants() {
-    }
 }

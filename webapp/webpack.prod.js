@@ -1,8 +1,8 @@
 const path = require('path');
 const ESLintPlugin = require('eslint-webpack-plugin');
 const { VueLoaderPlugin } = require('vue-loader')
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
-// the display name of the war
 const app = 'alfresco-extension-webapp';
 
 const config = {
@@ -26,7 +26,7 @@ const config = {
       {
         test: /\.css$/,
         use: [
-          'style-loader',
+          MiniCssExtractPlugin.loader,
           'css-loader'
         ]
       }
@@ -40,8 +40,13 @@ const config = {
         './src/main/webapp/vue-app/**/*.js',
         './src/main/webapp/vue-app/**/*.vue',
       ],
+      failOnError: false,
+      failOnWarning: false,
     }),
-    new VueLoaderPlugin()
+    new VueLoaderPlugin(),
+    new MiniCssExtractPlugin({
+      filename: 'css/alfrescoApp.css',
+    }),
   ],
   entry: {
     alfrescoApp: './src/main/webapp/vue-app/main.js'
@@ -52,7 +57,6 @@ const config = {
     libraryTarget: 'amd'
   },
   externals: {
-    //vue: 'Vue',
     vuetify: 'Vuetify',
     jquery: '$',
   },

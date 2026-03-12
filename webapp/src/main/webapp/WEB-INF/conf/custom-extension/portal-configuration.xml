@@ -6,7 +6,7 @@
       <name>new.portal.config.user.listener</name>
       <set-method>initListener</set-method>
       <type>org.exoplatform.portal.config.NewPortalConfigListener</type>
-      <description>This listener creates a page for Vue sample application</description>
+      <description>This listener creates Alfresco page</description>
       <init-params>
         <value-param>
           <name>override</name>
@@ -34,11 +34,20 @@
                 <value>
                   <string>dw</string>
                 </value>
+                  <value>
+                      <string>global</string>
+                  </value>
               </collection>
             </field>
             <field name="location">
               <string>war:/conf/custom-extension/portal</string>
             </field>
+              <field name="override">
+                  <boolean>${exo.alfresco-extension-webapp.portalConfig.metadata.override:true}</boolean>
+              </field>
+              <field name="importMode">
+                  <string>${exo.alfresco-extension-webapp.portalConfig.metadata.importmode:merge}</string>
+              </field>
           </object>
         </object-param>
       </init-params>

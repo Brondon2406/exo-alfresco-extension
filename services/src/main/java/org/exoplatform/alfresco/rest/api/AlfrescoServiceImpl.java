@@ -42,6 +42,11 @@ public final class AlfrescoServiceImpl implements AlfrescoService {
     /** Jackson ObjectMapper instance for JSON parsing. */
     private final ObjectMapper mapper = new ObjectMapper();
 
+    /**
+     * Constants instance to access Alfresco API URLs and messages.
+     */
+    private final Constants constants;
+
     // ──────────────────────────────────────────────── Constantes HTTP
 
     /** HTTP 201 Created status code. */
@@ -102,10 +107,14 @@ public final class AlfrescoServiceImpl implements AlfrescoService {
     /** Error title used in upload failure responses. */
     private static final String UPLOAD_ERROR = "Upload Error";
 
+    public AlfrescoServiceImpl(Constants constants) {
+        this.constants = constants;
+    }
+
     @Override
     public ServiceResponse login(final String alfrescoUsername, final String alfrescoPass) {
         try (CloseableHttpClient client = HttpClients.createDefault()) {
-            HttpPost post = new HttpPost(Constants.ALFRESCO_API_LOGIN_URL);
+            HttpPost post = new HttpPost(constants.getAlfrescoApiUrl());
             post.setHeader("Content-Type", "application/json");
             post.setHeader("Accept", "application/json");
 
@@ -149,7 +158,7 @@ public final class AlfrescoServiceImpl implements AlfrescoService {
     @Override
     public ServiceResponse getFiles(final String ticket) {
         try (CloseableHttpClient client = HttpClients.createDefault()) {
-            String url = Constants.ALFRESCO_API_FILES_URL.replace(NODE_ID, "-my-");
+            String url = constants.getAlfrescoApiFilesUrl().replace(NODE_ID, "-my-");
             HttpGet get = new HttpGet(url);
             get.setHeader(AUTHORIZATION, buildAuthHeader(ticket));
 
@@ -215,7 +224,7 @@ public final class AlfrescoServiceImpl implements AlfrescoService {
             }
 
             String fileName = filePart.getSubmittedFileName();
-            String url = Constants.ALFRESCO_API_UPLOAD_URL.replace(NODE_ID, parentNodeId);
+            String url = constants.getAlfrescoApiUploadUrl().replace(NODE_ID, parentNodeId);
             HttpPost post = new HttpPost(url);
             post.setHeader(AUTHORIZATION, buildAuthHeader(ticket));
 
@@ -258,7 +267,7 @@ public final class AlfrescoServiceImpl implements AlfrescoService {
     @Override
     public ServiceResponse downloadFile(final String ticket, final String fileID) {
         try (CloseableHttpClient client = HttpClients.createDefault()) {
-            String url = Constants.ALFRESCO_API_DOWNLOAD_URL.replace(NODE_ID, fileID);
+            String url = constants.getAlferscoApiDownloadUrl().replace(NODE_ID, fileID);
             HttpGet get = new HttpGet(url);
             get.setHeader(AUTHORIZATION, buildAuthHeader(ticket));
             LOG.info("Attempting to download file '{}' from Alfresco URL: {}", fileID, url);

@@ -2,21 +2,25 @@
   <div id="vue_webpack_alfresco-list">
     <h2 class="vue_webpack_alfresco-app-title">Liste des fichiers Alfresco</h2>
     <div
-      class="upload-zone"
-      @dragover.prevent
-      @drop.prevent="handleDrop">
+        class="upload-zone"
+        @dragover.prevent
+        @drop.prevent="handleDrop">
       <p>Déposez votre fichier ici ou cliquez pour sélectionner</p>
       <p v-if="fileToUpload"><strong>Fichier sélectionné :</strong> {{ fileToUpload.name }}</p>
       <input
-        type="file"
-        ref="fileInput"
-        @change="handleFileChange"
-        accept="*/*"
-        style="display: none">
+          type="file"
+          ref="fileInput"
+          aria-label="Sélectionner un fichier"
+          @change="handleFileChange"
+          accept="*/*"
+          style="display: none">
       <button @click="triggerFileInput">Choisir un fichier</button>
-      <button @click="uploadFile" :disabled="!fileToUpload || isUploading">
+      <button
+          @click="uploadFile"
+          :disabled="!fileToUpload || isUploading">
         {{ isUploading ? 'Envoi en cours...' : 'Déposer' }}
       </button>
+      <button @click="logout">Déconnexion</button>
     </div>
 
     <p class="alert-error" v-if="errorMessage">{{ errorMessage }}</p>
@@ -24,22 +28,22 @@
 
     <table v-if="files.length">
       <thead>
-        <tr>
-          <th>#</th>
-          <th>Nom</th>
-          <th>Créé le</th>
-          <th>Modifié le</th>
-          <th>Action</th>
-        </tr>
+      <tr>
+        <th>#</th>
+        <th>Nom</th>
+        <th>Créé le</th>
+        <th>Modifié le</th>
+        <th>Action</th>
+      </tr>
       </thead>
       <tbody>
-        <tr v-for="(file, index) in paginatedFiles" :key="file.id">
-          <td>{{ index + 1 + (page - 1) * pageSize }}</td>
-          <td>{{ file.name }}</td>
-          <td>{{ file.createdAt }}</td>
-          <td>{{ file.modifiedAt }}</td>
-          <td><a :href="downloadLink(file.id)">Télécharger</a></td>
-        </tr>
+      <tr v-for="(file, index) in paginatedFiles" :key="file.id">
+        <td>{{ index + 1 + (page - 1) * pageSize }}</td>
+        <td>{{ file.name }}</td>
+        <td>{{ file.createdAt }}</td>
+        <td>{{ file.modifiedAt }}</td>
+        <td><a :href="downloadLink(file.id)">Télécharger</a></td>
+      </tr>
       </tbody>
     </table>
 
@@ -53,12 +57,11 @@
 
 <script>
 export default {
-  inject: ['onLoginSuccess'],
   data() {
     return {
       files: [],
       fileToUpload: null,
-      parentNodeId: '-my-', // ✅ Plus sûr que "root" selon ton backend
+      parentNodeId: '-my-',
       errorMessage: '',
       successMessage: '',
       page: 1,
@@ -94,18 +97,15 @@ export default {
       if (!file) {
         return;
       }
-
       this.validateAndSetFile(file);
     },
     validateAndSetFile(file) {
-      const maxSize = 10 * 1024 * 1024; // 10 MB
-
+      const maxSize = 10 * 1024 * 1024;
       if (file.size > maxSize) {
         this.errorMessage = 'Le fichier dépasse la taille autorisée (10MB).';
         this.fileToUpload = null;
         return;
       }
-
       this.fileToUpload = file;
       this.errorMessage = '';
     },
@@ -114,23 +114,23 @@ export default {
         method: 'GET',
         credentials: 'include',
       })
-        .then((resp) => {
-          if (!resp.ok) {
-            throw resp;
-          }
-          return resp.json();
-        })
-        .then((data) => {
-          if (!Array.isArray(data)) {
-            throw new Error('Données invalides');
-          }
-          this.files = data;
-        })
-        .catch(async (err) => {
-          const msg = await err.text();
-          this.errorMessage = msg || 'Erreur lors du chargement des fichiers';
-          this.resetMessageAfterDelay();
-        });
+          .then((resp) => {
+            if (!resp.ok) {
+              throw resp;
+            }
+            return resp.json();
+          })
+          .then((data) => {
+            if (!Array.isArray(data)) {
+              throw new Error('Données invalides');
+            }
+            this.files = data;
+          })
+          .catch(async (err) => {
+            const msg = await err.text();
+            this.errorMessage = msg || 'Erreur lors du chargement des fichiers';
+            this.resetMessageAfterDelay();
+          });
     },
     uploadFile() {
       if (!this.fileToUpload) {
@@ -141,40 +141,37 @@ export default {
       const formData = new FormData();
       formData.append('file', this.fileToUpload);
 
-      console.log(this.fileToUpload);
-      console.log(formData.get('file'));
-
       this.isUploading = true;
       fetch(`${eXo.env.portal.context}/rest/alfresco/documents/upload/${this.parentNodeId}`, {
         method: 'POST',
         body: formData,
         credentials: 'include',
       })
-        .then((resp) => {
-          if (!resp.ok) {
+          .then((resp) => {
+            if (!resp.ok) {
+              this.fileToUpload = null;
+              this.$refs.fileInput.value = null;
+              this.fetchFiles();
+              this.resetMessageAfterDelay();
+              throw resp;
+            }
+            return resp.json();
+          })
+          .then(() => {
+            this.successMessage = 'Fichier déposé avec succès';
             this.fileToUpload = null;
             this.$refs.fileInput.value = null;
             this.fetchFiles();
             this.resetMessageAfterDelay();
-            throw resp;
-          }
-          return resp.json();
-        })
-        .then(() => {
-          this.successMessage = 'Fichier déposé avec succès';
-          this.fileToUpload = null;
-          this.$refs.fileInput.value = null;
-          this.fetchFiles();
-          this.resetMessageAfterDelay();
-        })
-        .catch(async (err) => {
-          const msg = await err.text();
-          this.errorMessage = msg || 'Échec de l\'upload du fichier';
-          this.resetMessageAfterDelay();
-        })
-        .finally(() => {
-          this.isUploading = false;
-        });
+          })
+          .catch(async (err) => {
+            const msg = await err.text();
+            this.errorMessage = msg || 'Échec de l\'upload du fichier';
+            this.resetMessageAfterDelay();
+          })
+          .finally(() => {
+            this.isUploading = false;
+          });
     },
     downloadLink(id) {
       return `${eXo.env.portal.context}/rest/alfresco/documents/download/${id}`;
@@ -184,18 +181,18 @@ export default {
         method: 'POST',
         credentials: 'include',
       })
-        .then((resp) => {
-          if (!resp.ok) {
-            throw resp;
-          }
-          sessionStorage.removeItem('alfrescoConnected');
-        })
-        .then(() => this.onLoginSuccess())
-        .catch(async (err) => {
-          const msg = await err.text();
-          this.errorMessage = msg || 'Échec de la déconnexion';
-          this.resetMessageAfterDelay();
-        });
+          .then((resp) => {
+            if (!resp.ok) {
+              throw resp;
+            }
+            sessionStorage.removeItem('alfrescoConnected');
+            this.$emit('logout-success');
+          })
+          .catch(async (err) => {
+            const msg = await err.text();
+            this.errorMessage = msg || 'Échec de la déconnexion';
+            this.resetMessageAfterDelay();
+          });
     },
     resetMessageAfterDelay() {
       setTimeout(() => {

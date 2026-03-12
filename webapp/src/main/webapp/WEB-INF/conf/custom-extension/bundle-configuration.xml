@@ -5,18 +5,18 @@
     <external-component-plugins>
     <target-component>org.exoplatform.services.resources.ResourceBundleService</target-component>
     <component-plugin>
-      <name>Vue Sample Portlet Resource Bundle</name>
+      <name>Alfresco Portlet Resource Bundle</name>
       <set-method>addResourceBundle</set-method>
       <type>org.exoplatform.services.resources.impl.BaseResourceBundlePlugin</type>
       <init-params>
         <values-param>
           <name>init.resources</name>
           <description>Store the following resources into the db for the first launch</description>
-            <value>locale.addon.Sample</value>
+            <value>locale.portlet.alfresco</value>
         </values-param>
         <values-param>
           <name>portal.resource.names</name>
-          <value>locale.addon.Sample</value>
+            <value>locale.portlet.alfresco</value>
         </values-param>
       </init-params>
     </component-plugin>

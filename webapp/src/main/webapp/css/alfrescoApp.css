@@ -1,3 +1,213 @@
+
+.loader-container[data-v-6a2ebeb2] {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 300px;
+}
+.loader[data-v-6a2ebeb2] {
+  border: 6px solid #f3f3f3;
+  border-top: 6px solid #2c9f45;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin-6a2ebeb2 1s linear infinite;
+  margin-bottom: 10px;
+}
+@keyframes spin-6a2ebeb2 {
+0% { transform: rotate(0deg);
+}
+100% { transform: rotate(360deg);
+}
+}
+.not-configured-message[data-v-6a2ebeb2] {
+  min-height: 200px;
+  text-align: center;
+}
+
+
+.login-form[data-v-a3d43024] {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 300px;
+}
+.login-form input[data-v-a3d43024] {
+  padding: 8px;
+}
+.login-form button[data-v-a3d43024] {
+  padding: 8px;
+  background-color: #2c9f45;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+.alert-error[data-v-a3d43024] {
+  color: red;
+}
+
+
+.loader-container[data-v-72a96c8a] {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 300px;
+}
+.loader[data-v-72a96c8a] {
+  border: 6px solid #f3f3f3;
+  border-top: 6px solid #2c9f45;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin-72a96c8a 1s linear infinite;
+  margin-bottom: 10px;
+}
+@keyframes spin-72a96c8a {
+0% { transform: rotate(0deg);
+}
+100% { transform: rotate(360deg);
+}
+}
+.not-configured-message[data-v-72a96c8a] {
+  min-height: 200px;
+  text-align: center;
+}
+
+
+.login-form[data-v-a3d43024] {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 300px;
+}
+.login-form input[data-v-a3d43024] {
+  padding: 8px;
+}
+.login-form button[data-v-a3d43024] {
+  padding: 8px;
+  background-color: #2c9f45;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+.alert-error[data-v-a3d43024] {
+  color: red;
+}
+
+
+.loader-container[data-v-c7f5b928] {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 300px;
+}
+.loader[data-v-c7f5b928] {
+  border: 6px solid #f3f3f3;
+  border-top: 6px solid #2c9f45;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin-c7f5b928 1s linear infinite;
+  margin-bottom: 10px;
+}
+@keyframes spin-c7f5b928 {
+0% { transform: rotate(0deg);
+}
+100% { transform: rotate(360deg);
+}
+}
+.not-configured-message[data-v-c7f5b928] {
+  min-height: 200px;
+  text-align: center;
+}
+
+
+.login-form[data-v-a3d43024] {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 300px;
+}
+.login-form input[data-v-a3d43024] {
+  padding: 8px;
+}
+.login-form button[data-v-a3d43024] {
+  padding: 8px;
+  background-color: #2c9f45;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+.alert-error[data-v-a3d43024] {
+  color: red;
+}
+
+
+.login-form[data-v-a3d43024] {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 300px;
+}
+.login-form input[data-v-a3d43024] {
+  padding: 8px;
+}
+.login-form button[data-v-a3d43024] {
+  padding: 8px;
+  background-color: #2c9f45;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+.alert-error[data-v-a3d43024] {
+  color: red;
+}
+
+
+.login-form[data-v-a3d43024] {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 300px;
+}
+.login-form input[data-v-a3d43024] {
+  padding: 8px;
+}
+.login-form button[data-v-a3d43024] {
+  padding: 8px;
+  background-color: #2c9f45;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+.alert-error[data-v-a3d43024] {
+  color: red;
+}
+
+
+.login-form[data-v-a3d43024] {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 300px;
+}
+.login-form input[data-v-a3d43024] {
+  padding: 8px;
+}
+.login-form button[data-v-a3d43024] {
+  padding: 8px;
+  background-color: #2c9f45;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+.alert-error[data-v-a3d43024] {
+  color: red;
+}
+
 /* AlfrescoApp Stylesheet */
 
 #vue_webpack_alfresco,
@@ -103,3 +313,9 @@ th {
   background-color: #ccc;
   cursor: not-allowed;
 }
+
+
+
+
+
+

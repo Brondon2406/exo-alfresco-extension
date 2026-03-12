@@ -1,15 +1,28 @@
 import './initComponents.js';
-import app from './components/app.vue';
 import './../css/alfrescoApp.css';
 
 const lang = eXo && eXo.env && eXo.env.portal && eXo.env.portal.language || 'en';
-const bundle = 'locale.portlet.alfrescoApp';
+const bundle = 'locale.portlet.alfresco';
 const url = `${eXo.env.portal.context}/${eXo.env.portal.rest}/i18n/bundle/${bundle}-${lang}.json`;
+const appId = 'AlfrescoApplication';
 
-exoi18n.loadLanguageAsync(lang, url)
-  .then(i18n => {
-    new Vue({
-      render: h => h(app),
-      i18n
-    }).$mount('#vue_webpack_alfresco');
-  });
+Vue.use(Vuetify);
+const vuetify = new Vuetify(eXo.env.portal.vuetifyPreset);
+
+export function init() {
+  exoi18n.loadLanguageAsync(lang, url)
+    .then(i18n => {
+      Vue.createApp({
+        template: `<alfresco-app id="${appId}" />`,
+        vuetify,
+        i18n,
+      }, `#${appId}`, 'Alfresco Application');
+    })
+    .catch(() => {
+      // Monte l'app même sans i18n pour ne pas bloquer
+      Vue.createApp({
+        template: `<alfresco-app id="${appId}" />`,
+        vuetify,
+      }, `#${appId}`, 'Alfresco Application');
+    });
+}

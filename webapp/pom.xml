@@ -16,6 +16,12 @@
   <build>
     <finalName>alfresco-extension-webapp</finalName>
     <resources>
+        <resource>
+            <directory>src/main/resources</directory>
+            <includes>
+                <include>**/*.properties</include>
+            </includes>
+        </resource>
       <resource>
         <directory>src/main/webapp</directory>
         <targetPath>META-INF/resources</targetPath>
