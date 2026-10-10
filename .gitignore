@@ -135,3 +135,4 @@ docker-compose.override.yml
 *.hprof
 *.dump
 *.log.zip
+docker/.env
