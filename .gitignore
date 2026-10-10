@@ -136,3 +136,5 @@ docker-compose.override.yml
 *.dump
 *.log.zip
 docker/.env
+docker/*.jar
+docker/*.war
